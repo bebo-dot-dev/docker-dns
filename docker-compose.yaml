@@ -1,0 +1,30 @@
+services:
+  bind9.minio:
+    image: bind9.minio
+    container_name: bind9.minio
+    # ports:
+    #   - "53:53/udp"
+    #   - "53:53/tcp"
+    #   - "127.0.0.2:953:953/tcp"
+    environment:
+      - BIND9_USER=root
+      - TZ=UTC
+    dns: 127.0.0.1
+    volumes:
+      - ./cache:/var/cache/bind
+      - ./records:/var/lib/bind
+      - ./etc/resolv.conf:/etc/resolv.conf
+    network_mode: "host"
+  ubuntu:
+    image: nicolaka/netshoot
+    container_name: netshoot
+    command: ["sleep","infinity"]
+    dns: bind9.minio
+    depends_on:
+      - bind9.minio
+    network_mode: "host"
+
+# networks:
+#   dns-net:
+#     driver: host
+  
